@@ -60,7 +60,6 @@ static void MX_TIM1_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-#define LED_COUNT 100
 
 #define DUTY_0 20 // 26% of 75  WS2812 = 32%
 #define DUTY_1 56 // 75% of 75  WS2812 = 62%
@@ -71,7 +70,7 @@ static void MX_TIM1_Init(void);
 #define BUFFER_LED_LEN  LED_NUM*24
 #define BUFFER_LEN (TRST_LEN + BUFFER_LED_LEN + TRST_LEN)
 
-uint16_t pwm_buffer[BUFFER_LEN];
+uint8_t pwm_buffer[BUFFER_LEN];
 
 int pwm_send_flag=0;
 
@@ -86,9 +85,9 @@ void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim)
 // 	pwm_send_flag=0;
 // }
 
-void color_convert(uint16_t* buffer,uint32_t led_color)
+void color_convert(uint8_t* buffer,uint32_t led_color)
 { 
-    uint16_t bit_value = 0;
+    uint8_t bit_value = 0;
     for(int i = 0; i < 24; i++){
       bit_value = (led_color >> (23 - i)) & 0x01; 
       if (bit_value == 0){
@@ -103,7 +102,7 @@ void color_convert(uint16_t* buffer,uint32_t led_color)
 void make_led_pwm(uint32_t led_color)
 {
   int i = 0;
-  uint16_t* p_buffer;
+  uint8_t* p_buffer;
     // TRST Buffer
   while (i < TRST_LEN){
     pwm_buffer[i] = DUTY_RESET;
@@ -181,27 +180,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-    make_led_pwm(0x00FFFFFF);
-    led_dma_send();
 
-    HAL_Delay(2000);
-
-    make_led_pwm(0x00FF0000);
-    led_dma_send();
-
-    HAL_Delay(2000);
-
-    make_led_pwm(0x0000FF00);
-    led_dma_send();
-    HAL_Delay(2000);
-
-    make_led_pwm(0x000000FF);
-    led_dma_send();
-    HAL_Delay(2000);
-
-    make_led_pwm(0x00000000);
-    led_dma_send();
-    HAL_Delay(2000);  
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
