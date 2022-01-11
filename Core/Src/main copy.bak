@@ -81,7 +81,7 @@ void StartDefaultTask(void *argument);
 #define BUFFER_LEN (TRST_LEN + BUFFER_LED_LEN + TRST_LEN)
 
 #define DMA_TYPE  uint8_t
-uint16_t pwm_buffer[(BUFFER_LEN+1)/2];
+DMA_TYPE pwm_buffer[BUFFER_LEN];
 
 int pwm_send_flag=0;
 
@@ -114,15 +114,13 @@ void make_led_pwm(uint32_t led_color)
 {
   int i = 0;
   DMA_TYPE* p_buffer;
-
-  p_buffer = (DMA_TYPE*)pwm_buffer;
     // TRST Buffer
   while (i < TRST_LEN){
-    p_buffer[i] = DUTY_RESET;
+    pwm_buffer[i] = DUTY_RESET;
     i++;
   }
 
-  p_buffer = (DMA_TYPE*)pwm_buffer + i;
+  p_buffer = pwm_buffer + i;
   while (i < BUFFER_LED_LEN + TRST_LEN){
       color_convert(p_buffer,led_color);
       i += 24;
@@ -130,7 +128,7 @@ void make_led_pwm(uint32_t led_color)
   }
 
   while(i < BUFFER_LEN){
-    p_buffer[i] = DUTY_RESET;
+    pwm_buffer[i] = DUTY_RESET;
     i++;
   }
 }
